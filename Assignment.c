@@ -1,18 +1,34 @@
 #include <stdio.h>
 #include <string.h>
-#define num_of_com 10 // Number of Comapnies
-#define num_of_days 7 // Number of Days
+#define num_of_com 10  // Number of Comapnies
+#define num_of_days 21 // Number of Days
+#define dayStart 10    // Starting date
+#define dayEnd dayStart + num_of_days // Ending Date
+#define id 101    //Starting ID of Company
 
+//Structure for Date
+typedef struct Day
+{
+    int date; 
+    int month;
+    int year;
+} Day;
+
+//Structure for Stock of Companies
 typedef struct Stock
 {
     char name[100];
-    float Open;
-    float High;
-    float Low;
-    float Close;
-    int volume;
+    float Open[num_of_days];
+    float High[num_of_days];
+    float Low[num_of_days];
+    float Close[num_of_days];
+    int volume[num_of_days];
+    int stockID;
+    Day DMY[num_of_days];
+
 } Stock;
 
+//Structur to store Overall Performance
 typedef struct OvrPerformance
 {
     char names[100];
@@ -20,413 +36,170 @@ typedef struct OvrPerformance
 
 } OvrPerformance;
 
-int day()
-{
-    int day, flag = 1;
-    char ans;
-
-    while (flag == 1)
+void Question1(Stock S[num_of_com], int start_day, char type_startPrice, int end_day, char type_endPrice, int StockID)
+{   
+    float diff, change;
+    int com;
+    for (int i = 0; i < num_of_com; i++)
     {
-        printf("Enter the day(1-7):- \n");
-        scanf("%d", &day);
-        if (day > 0 && day < 8)
+        if (S[i].stockID == StockID)
         {
-            flag = 0;
-        }
-        else
-        {
-            printf("!!Invalid Input!!\n");
-            printf("Do you want to Continue?(Y/N)\n");
-            scanf("%c", &ans);
-            if (ans != 'Y')
-            {
-                flag = 0;
-            }
+            com = i;
         }
     }
-    return (day);
-}
+    float start_price, end_price; 
+    if (type_startPrice == 'O')
+        start_price = S[com].Open[start_day];
 
-void checkDay(int buy_day, int sell_day)
-{
-    int flag = 1;
-    char ans, ans1;
-    while (flag == 1)
-    {
-        if (buy_day > sell_day)
-        {
-            printf("!!Invalid Input!! Do you wnat to Continue(Y/N):- \n");
-            scanf("%c", &ans);
-            if (ans == 'Y')
-            {
-                printf("Do you want to change Buy Day?\n");
-                scanf("%c", &ans1);
-                if (ans1 == 'Y')
-                {
-                    printf("New Buy Day:-\n ");
-                    buy_day = day();
-                }
-                else
-                {
-                    printf("Change the Selling Day\n");
-                    sell_day = day();
-                }
-            }
-            else
-            {
-                flag = 0;
-            }
-        }
-        else
-        {
-            flag = 0;
-        }
-    }
-}
+    else if (type_startPrice == 'L')
+        start_price = S[com].Low[start_day];
 
-char checkType()
-{
-    int flag = 1;
-    char type_price[10], ans[20];
-    while (flag == 1)
-    {
+    else if (type_startPrice == 'H')
+        start_price = S[com].High[start_day];
 
-        printf("Enter type of price (Open , High , Low , Close):-\t");
-        scanf("%s", &type_price);
-        if (strcmp(type_price, "Open") == 0 || strcmp(type_price, "Close") == 0 || strcmp(type_price, "High") == 0 || strcmp(type_price, "Low") == 0)
-        {
-            flag = 0;
-        }
-        else
-        {
-            printf("!! Invalid Input !! Do you want to continue?(Yes/No)\t");
-            scanf("%s", &ans);
-            if (strcmp(ans, "Yes") == 0)
-            {
-                // continue
-            }
-            else if (strcmp(ans, "No") == 0)
-            {
-                flag = 0;
-            }
-            else
-            {
-                printf("!!Invalid Input!!\n");
-            }
-        }
-    }
-    return type_price[0];
-}
-
-void input(Stock S[num_of_com][num_of_days])
-{
-
-    int flag = 1;
-    char ans[20];
-    int no;
-    while (flag == 1)
-    {
-        printf("Enter the Question Number:- \n");
-        scanf("%d", &no);
-        if (no == 1)
-        {
-
-            printf("Do you want to continue?(Yes/No)\t");
-            scanf("%s", &ans);
-            if (strcmp(ans, "No") == 0)
-            {
-                flag = 0;
-            }
-            else if (strcmp(ans, "Yes") != 0 || strcmp(ans, "No") != 0)
-            {
-                printf("!!Invalid Input!!\n");
-            }
-        }
-        else if (no == 2)
-        {
-
-            printf("Do you want to continue?(Yes/No)\t");
-            scanf("%s", &ans);
-            if (strcmp(ans, "No") == 0)
-            {
-                flag = 0;
-            }
-            else if (strcmp(ans, "Yes") != 0 || strcmp(ans, "No") != 0)
-            {
-                printf("!!Invalid Input!!\n");
-            }
-        }
-        else if (no == 3)
-        {
-            printf("Do you want to continue?(Yes/No)\t");
-            scanf("%s", &ans);
-            if (strcmp(ans, "No") == 0)
-            {
-                flag = 0;
-            }
-            else if (strcmp(ans, "Yes") != 0 || strcmp(ans, "No") != 0)
-            {
-                printf("!!Invalid Input!!\n");
-            }
-        }
-        else if (no == 4)
-        {
-            int buy = day();
-            // char buy_type = checkType();
-            int sell = day();
-            checkDay(buy, sell);
-            // char sell_type = checkType();
-
-            Question4(S, buy, "Open", sell, "Close");
-
-            printf("Do you want to continue?(Yes/No)\t");
-            scanf("%s", &ans);
-            if (strcmp(ans, "No") == 0)
-            {
-                flag = 0;
-            }
-            else if (strcmp(ans, "Yes") != 0 || strcmp(ans, "No") != 0)
-            {
-                printf("!!Invalid Input!!\n");
-            }
-        }
-        else if (no == 5)
-        {
-
-            printf("Do you want to continue?(Yes/No)\t");
-            scanf("%s", &ans);
-            if (strcmp(ans, "No") == 0)
-            {
-                flag = 0;
-            }
-        }
-        else if (no == 6)
-        {
-
-            printf("Do you want to continue?(Yes/No)\t");
-            scanf("%s", &ans);
-            if (strcmp(ans, "No") == 0)
-            {
-                flag = 0;
-            }
-            else if (strcmp(ans, "Yes") != 0 || strcmp(ans, "No") != 0)
-            {
-                printf("!!Invalid Input!!\n");
-            }
-        }
-        else if (no == 7)
-        {
-
-            printf("Do you want to continue?(Yes/No)\t");
-            scanf("%s", &ans);
-            if (strcmp(ans, "No") == 0)
-            {
-                flag = 0;
-            }
-            else if (strcmp(ans, "Yes") != 0 || strcmp(ans, "No") != 0)
-            {
-                printf("!!Invalid Input!!\n");
-            }
-        }
-    }
-}
-
-void Question1(Stock S[num_of_com][num_of_days], int start_date, int end_date, char type_startPrice[], char type_endPrice[], int num)
-{
-    int check = 0;
-    if (start_date > end_date)
-    {
-        printf("!! Invalid Inputs: 'starting date should not be greater than ending date' !!");
-    }
-    else if (start_date > 7 || start_date < 1 || end_date > 7 || end_date < 1)
-    {
-        printf("!! Invalid Inputs: 'starting date or ending date should not exceed range i.e [1,7]' !!");
-    }
     else
-    {
-        float diff, change;
-        int com = num - 1;
-        int dateEnd = end_date - 1;
-        int dateStart = start_date - 1;
+        start_price = S[com].Close[start_day];
 
-        if (strcmp(type_startPrice, "Open") == 0)
-        {
-            diff = S[num - 1][end_date - 1].Open - S[num - 1][start_date - 1].Open;
-            change = (diff / S[num - 1][end_date - 1].Open) * 100;
-        }
-        else if (strcmp(type_startPrice, "High") == 0)
-        {
-            diff = S[num - 1][end_date - 1].High - S[num - 1][start_date - 1].High;
-            change = (diff / S[num - 1][end_date - 1].High) * 100;
-        }
-        else if (strcmp(type_startPrice, "Low") == 0)
-        {
-            diff = S[num - 1][end_date - 1].Low - S[num - 1][start_date - 1].Low;
-            change = (diff / S[num - 1][end_date - 1].Low) * 100;
-        }
-        else if (strcmp(type_startPrice, "Close") == 0)
-        {
-            diff = S[num - 1][end_date - 1].Close - S[num - 1][start_date - 1].Close;
-            change = (diff / S[num - 1][end_date - 1].Close) * 100;
-        }
-        else
-        {
-            check = 1;
-            printf("!! No such price type exists !!");
-        }
+    if (type_endPrice == 'O')
+        end_price = S[com].Open[end_day];
 
-        if (check == 0)
-        {
-            if (start_date != end_date)
-            {
-                printf("Percentage change in price from day %d to day %d are:\n", start_date, end_date);
-                printf("%s  ->  %f %% \n", S[num - 1][start_date - 1].name, change);
-            }
-            else
-            {
-                printf("Percentage change in prices from day %d to day %d are:\n", start_date, end_date);
-                diff = S[num - 1][end_date - 1].Close - S[num - 1][start_date - 1].Open;
-                change = (diff / S[num - 1][end_date - 1].Close) * 100;
-                printf("%s  ->  %f %% \n", S[num - 1][start_date - 1].name, change);
-            }
-        }
-        else
-        {
-            printf("Invalid Inputs:");
-        }
-    }
+    else if (type_endPrice == 'L')
+        end_price = S[com].Low[end_day];
+
+    else if (type_endPrice == 'H')
+        end_price = S[com].High[end_day];
+
+    else
+        end_price = S[com].Close[end_day];
+
+    printf("\nPercentage change in prices from date %d to date %d are:\n", start_day + dayStart, end_day + dayStart);
+    diff = end_price - start_price;
+    change = (diff / start_price) * 100;
+    printf("%s  ->  %f %% \n", S[com].name, change);
 }
 
-void Question2(Stock S[num_of_com][num_of_days], int day)
+void Question2(Stock S[num_of_com], int ChosenDay)
 {
     int i, j, flag = 1;
-    for (i = 0; i < 10 && flag == 1; i++)
+    for (i = 0; i < num_of_com && flag == 1; i++)
     {
         flag = 0;
         for (j = 0; j < num_of_com - 1; j++)
         {
-            if (S[j][day].volume > S[j + 1][day].volume)
+            if (S[j].volume[ChosenDay] > S[j + 1].volume[ChosenDay])
             {
-                Stock temp = S[j][day];
-                S[j][day] = S[j + 1][day];
-                S[j + 1][day] = temp;
+                Stock temp = S[j]; // temporary structure for swapping
+                S[j] = S[j + 1];
+                S[j + 1] = temp;
 
                 flag = 1;
             }
-            else if (S[j][day].volume == S[j + 1][day].volume)
+            else if (S[j].volume[ChosenDay] == S[j + 1].volume[ChosenDay]) // If Volumes are same 
             {
-                if (S[j][day].Close > S[j + 1][day].Close)
+                if (S[j].Close[ChosenDay] > S[j + 1].Close[ChosenDay]) // Comparing Close prices
                 {
-                    Stock temp = S[j][day];
-                    S[j][day] = S[j + 1][day];
-                    S[j + 1][day] = temp;
+                    Stock temp = S[j]; // temporary structure for swapping
+                    S[j] = S[j + 1];
+                    S[j + 1] = temp;
                 }
                 flag = 1;
             }
         }
     }
+    printf("Sorted according to <Volume,Close price> on %d-03-2023\n",ChosenDay+dayStart);
     for (int i = 0; i < num_of_com; i++)
     {
-        printf("%s --> %d \t %f\n", S[i][0].name, S[i][day].volume, S[i][day].Close);
+        printf("%s --> %d \t %f\n", S[i].name, S[i].volume[ChosenDay], S[i].Close[ChosenDay]);
     }
 }
 
-void Question3(Stock S[num_of_com][num_of_days], int buy_date, int sell_date, char buytype[], char selltype[], int NumStocks, int Chosen[])
+void Question3(Stock S[num_of_com], int buy_day, char buytype, int sell_day, char selltype, int NumStocks, int Chosen[])
 {
-    for (int i = 0; i < NumStocks; i++)
+    for (int i = 0; i < NumStocks; i++) // NumStocks is number of stocks chosen and Chosen[] is array storing them
     {
         float buy_price, sell_price;
-        int dateFinal = sell_date - 1;
-        int dateInitial = buy_date - 1;
-        int num = Chosen[i] - 1;
-        if (strcmp(buytype, "Open") == 0)
+
+        int x = Chosen[i], num;
+        int flag = 1;
+        for (int i = 0; i < num_of_com && flag == 1; i++)
         {
-            buy_price = S[num][dateInitial].Open;
-        }
-        else if (strcmp(buytype, "High") == 0)
-        {
-            buy_price = S[num][dateInitial].High;
-        }
-        else if (strcmp(buytype, "Low") == 0)
-        {
-            buy_price = S[num][dateInitial].Low;
-        }
-        else
-        {
-            buy_price = S[num][dateInitial].Close;
+            if (x == S[i].stockID)
+            {
+                num = i;
+                flag = 0;
+            }
         }
 
-        if (strcmp(selltype, "Open") == 0)
-        {
-            sell_price = S[num][dateFinal].Open;
-        }
-        else if (strcmp(selltype, "High") == 0)
-        {
-            sell_price = S[num][dateFinal].High;
-        }
-        else if (strcmp(selltype, "Low") == 0)
-        {
-            sell_price = S[num][dateFinal].Low;
-        }
+        if (buytype == 'O')
+            buy_price = S[num].Open[buy_day];
+
+        else if (buytype == 'H')
+            buy_price = S[num].High[buy_day];
+
+        else if (buytype == 'L')
+            buy_price = S[num].Low[buy_day];
+
         else
-        {
-            sell_price = S[num][dateFinal].Close;
-        }
+            buy_price = S[num].Close[buy_day];
+
+        if (selltype == 'O')
+            sell_price = S[num].Open[sell_day];
+
+        else if (selltype == 'H')
+            sell_price = S[num].High[sell_day];
+
+        else if (selltype == 'L')
+            sell_price = S[num].Low[sell_day];
+
+        else
+            sell_price = S[num].Close[sell_day];
+
         float change = sell_price - buy_price;
         if (change < 0)
         {
             change *= (-1);
-            printf("%s\t --> %0.3f Rs Loss\n", S[num][buy_date].name, change);
+            printf("%s\t --> %0.3f Rs Loss\n", S[num].name, change);
         }
         else
         {
-            printf("%s\t --> %0.3f Rs Profit\n", S[num][buy_date].name, change);
+            printf("%s\t --> %0.3f Rs Profit\n", S[num].name, change);
         }
     }
 }
 
-void Question4(Stock S[num_of_com][num_of_days], int buy_day, char buy_type[20], int sell_day, char sell_type[20])
+void Question4(Stock S[num_of_com], int buy_day, char buytype, int sell_day, char selltype)
 {
     int j;
     int check = 1;
     float buy, sell;
     float performance, high_performance = 0;
     printf("The Highest Preforming Stock is :- \n");
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < num_of_com; i++)
     {
 
-        if (strcmp(buy_type, "Open") == 0)
-        {
-            buy = S[i][buy_day].Open;
-        }
-        else if (strcmp(buy_type, "Close") == 0)
-        {
-            buy = S[i][buy_day].Close;
-        }
-        else if (strcmp(buy_type, "High") == 0)
-        {
-            buy = S[i][buy_day].High;
-        }
-        else if (strcmp(buy_type, "Low") == 0)
-        {
-            buy = S[i][buy_day].Low;
-        }
-        if (strcmp(sell_type, "Open") == 0)
-        {
-            sell = S[i][sell_day].Open;
-        }
-        if (strcmp(sell_type, "Close") == 0)
-        {
-            sell = S[i][sell_day].Close;
-        }
-        if (strcmp(sell_type, "High") == 0)
-        {
-            sell = S[i][sell_day].High;
-        }
-        if (strcmp(sell_type, "Low") == 0)
-        {
-            sell = S[i][sell_day].Low;
-        }
+        {if (buytype == 'O')
+            buy = S[i].Open[buy_day];
+
+        else if (buytype == 'H')
+            buy = S[i].High[buy_day];
+
+        else if (buytype == 'L')
+            buy = S[i].Low[buy_day];
+
+        else
+            buy = S[i].Close[buy_day];
+
+        if (selltype == 'O')
+            sell = S[i].Open[sell_day];
+
+        else if (selltype == 'H')
+            sell = S[i].High[sell_day];
+
+        else if (selltype == 'L')
+            sell = S[i].Low[sell_day];
+
+        else
+            sell = S[i].Close[sell_day];}
 
         performance = 100 * (sell - buy) / buy;
         if (performance > high_performance)
@@ -435,51 +208,42 @@ void Question4(Stock S[num_of_com][num_of_days], int buy_day, char buy_type[20],
             j = i;
         }
     }
-    printf(" %s \t\t\t %f  ", S[j][0].name, high_performance);
+    printf("%s \t->\t %f  ", S[j].name, high_performance);
 }
 
-void Question5(Stock S[num_of_com][num_of_days], int buy_day, char buy_type[20], int sell_day, char sell_type[20])
+void Question5(Stock S[num_of_com], int buy_day, char buytype, int sell_day, char selltype)
 {
     int j;
     int check = 1;
     float buy, sell;
     float performance, low_performance = 0;
     printf("The Lowest Preforming Stock is :- \n");
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < num_of_com; i++)
     {
 
-        if (strcmp(buy_type, "Open") == 0)
-        {
-            buy = S[i][buy_day].Open;
-        }
-        else if (strcmp(buy_type, "Close") == 0)
-        {
-            buy = S[i][buy_day].Close;
-        }
-        else if (strcmp(buy_type, "High") == 0)
-        {
-            buy = S[i][buy_day].High;
-        }
-        else if (strcmp(buy_type, "Low") == 0)
-        {
-            buy = S[i][buy_day].Low;
-        }
-        if (strcmp(sell_type, "Open") == 0)
-        {
-            sell = S[i][sell_day].Open;
-        }
-        else if (strcmp(sell_type, "Close") == 0)
-        {
-            sell = S[i][sell_day].Close;
-        }
-        else if (strcmp(sell_type, "High") == 0)
-        {
-            sell = S[i][sell_day].High;
-        }
-        else if (strcmp(sell_type, "Low") == 0)
-        {
-            sell = S[i][sell_day].Low;
-        }
+        {if (buytype == 'O')
+            buy = S[i].Open[buy_day];
+
+        else if (buytype == 'C')
+            buy = S[i].Close[buy_day];
+
+        else if (buytype == 'H')
+            buy = S[i].High[buy_day];
+
+        else
+            buy = S[i].Low[buy_day];
+
+        if (selltype == 'O')
+            sell = S[i].Open[sell_day];
+
+        else if (selltype == 'C')
+            sell = S[i].Close[sell_day];
+
+        else if (selltype == 'H')
+            sell = S[i].High[sell_day];
+
+        else
+            sell = S[i].Low[sell_day];}
 
         performance = 100 * (sell - buy) / buy;
         if (performance < low_performance)
@@ -488,26 +252,29 @@ void Question5(Stock S[num_of_com][num_of_days], int buy_day, char buy_type[20],
             j = i;
         }
     }
-    printf(" %s \t\t\t %f", S[j][0].name, low_performance);
+    printf(" %s \t\t\t %f", S[j].name, low_performance);
 }
 
-void Question6(Stock S[num_of_com][num_of_days], int starting_date, int ending_date)
+void Question6(Stock S[num_of_com], int starting_day, int ending_day)
 {
-    OvrPerformance P[num_of_com];
+    OvrPerformance P[num_of_com]; // Structure storing Overall performance with name of the stock.
+
     for (int i = 0; i < num_of_com; i++)
     {
         float ovr_per = 0;
-        for (int j = starting_date - 1; j <= ending_date - 1; j++)
+        for (int j = starting_day; j <= ending_day; j++)
         {
             float change = 0;
-            change = S[i][j].Close - S[i][j].Open;
-            change = (change / S[i][j].Open) * S[i][j].volume;
+            change = S[i].Close[j] - S[i].Open[j];
+            change = (change / S[i].Open[j]) * S[i].volume[j];
             ovr_per += change;
         }
-        strcpy(P[i].names, S[i][0].name);
+        strcpy(P[i].names, S[i].name);
         P[i].Op = ovr_per;
     }
+
     int flag = 1;
+    // Sorting Data
     for (int i = 0; i < num_of_com - 1 && flag == 1; i++)
     {
         flag = 0;
@@ -528,469 +295,721 @@ void Question6(Stock S[num_of_com][num_of_days], int starting_date, int ending_d
     }
 }
 
-void Question7(Stock S[num_of_com][num_of_days], int date, int start_date, int end_date)
+void Question7(Stock S[num_of_com], int day, int start_day, int end_day)
 {
-    float avg_val;
+    float avg_val; // Stores average value at a particular day 
+    printf("Average price of a Stock on %d-03-2023\n",day);
     for (int i = 0; i < num_of_com; i++)
     {
-        avg_val = (S[i][date - 1].Open + S[i][date - 1].Close) / 2;
-        printf("%s -> %0.3f\n", S[i][0].name, avg_val);
+        avg_val = (S[i].Open[day] + S[i].Close[day]) / 2;
+        printf("%s -> %0.3f\n", S[i].name, avg_val);
     }
     printf("\n");
-    float avg_avg_val;
+    float avg_avg_val; // Storing average of average value between starting and ending day
+    printf("Average of average price of a Stock on %d-03-2023 to %d-03-2023\n",start_day+dayStart,end_day+dayStart);
     for (int i = 0; i < num_of_com; i++)
     {
         float weighted_Sum = 0, Vol_Sum = 0;
-        for (int j = start_date; j <= end_date; j++)
+        for (int j = start_day; j <= end_day; j++)
         {
-            avg_val = (S[i][j - 1].Open + S[i][j - 1].Close) / 2;
-            weighted_Sum += avg_val * S[i][j - 1].volume;
-            Vol_Sum += S[i][j - 1].volume;
+            avg_val = (S[i].Open[j] + S[i].Close[j]) / 2;
+            weighted_Sum += avg_val * S[i].volume[j];
+            Vol_Sum += S[i].volume[j];
         }
         avg_avg_val = weighted_Sum / Vol_Sum;
-        printf("%s -> %0.3f \n", S[i][0].name, avg_avg_val);
+        printf("%s -> %0.3f \n", S[i].name, avg_avg_val);
     }
 }
 
+// void Question7a(Stock S[num_of_com],int day , int start_day , int end_day){}
+
+// This Function is for checking type of price chosen.
+char checkType_price()
+{
+    int flag = 1;
+    char type_price[10], ans, result;
+    while (flag == 1)
+    {
+
+        printf("Enter type of price (Open , High , Low , Close):- ");
+        scanf("%s", &type_price);
+        if (strcmp(type_price, "Open") == 0 || strcmp(type_price, "Close") == 0 || strcmp(type_price, "High") == 0 || strcmp(type_price, "Low") == 0)
+        {
+            flag = 0;
+            result = type_price[0];
+        }
+        else
+        {
+            printf("!! Invalid Input !! (Invalid PriceType) \nDo you want to continue?(Y/N): ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                result = 'z';
+                flag = 0;
+            }
+        }
+    }
+    return result;
+}
+
+// This Function is for taking input of day.
+int date_Input(Stock S[num_of_com], char day_type[])
+{
+    int store = -1;
+    int day, flag = 1;
+    int check = 1;
+    char ans;
+
+    while (flag == 1)
+    {
+        printf("Enter the %s date(%d-%d): ", day_type, dayStart, dayEnd - 1);
+        scanf("%d", &day);
+        if (day >= dayStart && day < dayEnd)
+        {
+            for (int i = 0; i < num_of_days && check == 1; i++)
+            {
+                if (day == S[0].DMY[i].date)
+                {
+                    check = 0;
+                    store = i;
+                }
+            }
+            flag = 0;
+        }
+        else
+        {
+            printf("!!Invalid Input!! (Input is not in range)\n");
+            printf("Do you want change the input?(Y/N)- ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                flag = 0;
+            }
+        }
+    }
+    return store;
+}
+
+// This Function is for checking valid buying and selling day.
+int checkDay(Stock S[num_of_com], int *buy_day, int *sell_day)
+{
+    int flag = 1;
+    char choice, choice1;
+    int ans;
+    while (flag == 1)
+    {
+        if (*buy_day > *sell_day)
+        {
+            printf("!!Invalid Input!! (Buying date should be less than Selling date)\nDo you wnat to change(Y/N):-  ");
+            scanf(" %c", &choice);
+            if (choice == 'Y')
+            {
+                printf("Do you want to change Buy Day?(Y/N) ");
+                scanf(" %c", &choice1);
+                if (choice1 == 'Y')
+                {
+                    *buy_day = date_Input(S, "New buy");
+                }
+                else
+                {
+                    *sell_day = date_Input(S, "New sell");
+                }
+            }
+            else
+            {
+                return -1;
+                flag = 0;
+            }
+        }
+        else
+        {
+            flag = 0;
+        }
+    }
+    return ans;
+}
+
+// This Function is for Q3 to take input number of companies and their StockID.
+void ChosenStockID(Stock S[num_of_com], int NumCompany, int Ans[])
+{
+    int ChosenID[NumCompany];
+
+    printf("Enter the Stock ID's of companies to choose:\n");
+    for (int i = 0; i < NumCompany; i++)
+    {
+        printf("Enter Company %d Stock ID (%d-%d): ", i + 1, id, id + num_of_com - 1);
+        scanf("%d", &ChosenID[i]);
+    }
+    int index = 0;
+    for (int i = 0; i < num_of_com; i++)
+    {
+        int flag = 1;
+        for (int j = 0; j < NumCompany && flag == 1; j++)
+        {
+            if (ChosenID[j] == S[i].stockID)
+            {
+                Ans[index] = S[i].stockID;
+                index++;
+                flag = 0;
+            }
+        }
+    }
+}
+
+// This Function is taking all the required inputs for functions to run.
+void input(Stock S[num_of_com])
+{
+    int flag = 1, check = 1;
+    char ans;
+    int no;
+    while (flag == 1)
+    {
+
+        printf("Enter the Question Number:- ");
+        scanf("%d", &no);
+        if (no == 1)
+        {
+            int check = 1, final_check;
+            int buy, sell;
+            char buy_type, sell_type;
+            while (check != -1)
+            {
+                buy = date_Input(S, "buy");
+                if (buy != -1)
+                {
+                    buy_type = checkType_price();
+                    if (buy_type != 'z')
+                    {
+                        sell = date_Input(S, "sell");
+                        if (sell != -1 && buy_type != 'z')
+                        {
+                            int x;
+                            x = checkDay(S, &buy, &sell);
+                            if (x != -1)
+                            {
+                                sell_type = checkType_price();
+                                if (sell_type != 'z')
+                                {
+                                    check = -1;
+                                    final_check = -1;
+                                }
+                                else
+                                {
+                                    check = -1;
+                                }
+                            }
+                            else
+                            {
+                                check = -1;
+                            }
+                        }
+                        else
+                        {
+                            check = -1;
+                        }
+                    }
+                    else
+                    {
+                        check = -1;
+                    }
+                }
+                else
+                {
+                    check = -1;
+                }
+            }
+            while (final_check == -1)
+            {
+                int num;
+                char res;
+                printf("Enter the StockID:- ");
+                scanf("%d", &num);
+                if (num >= id && num < id + num_of_com - 1)
+                {
+                    Question1(S, buy, buy_type, sell, sell_type, num);
+                    final_check = 0;
+                }
+                else
+                {
+                    printf("!!Invalid ID \nDo You want to continue?(Y/N) ");
+                    scanf(" %c", &res);
+                    if (res != 'Y')
+                    {
+                        final_check = 0;
+                    }
+                }
+            }
+
+            printf("Next Question?(Y/N):- ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                flag = 0;
+                check = 0;
+            }
+        }
+        else if (no == 2)
+        {
+            int check = 1;
+            int buy;
+
+            while (check != -1)
+            {
+                buy = date_Input(S, "");
+                if (buy != -1)
+                {
+                    check = -1;
+                    Question2(S, buy);
+                }
+                else
+                {
+                    check = -1;
+                }
+            }
+            printf("Next Question?(Y/N):- ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                flag = 0;
+            }
+        }
+        else if (no == 3)
+        {
+            int check = 1, final_check;
+            int buy, sell;
+            char buy_type, sell_type, res;
+            while (check != -1)
+            {
+                buy = date_Input(S, "buy");
+                if (buy != -1)
+                {
+                    buy_type = checkType_price();
+                    if (buy_type != 'z')
+                    {
+                        sell = date_Input(S, "sell");
+                        if (sell != -1 && buy_type != 'z')
+                        {
+                            int x;
+                            x = checkDay(S, &buy, &sell);
+                            if (x != -1)
+                            {
+                                sell_type = checkType_price();
+                                if (sell_type != 'z')
+                                {
+                                    check = -1;
+                                    final_check = -1;
+                                }
+                                else
+                                {
+                                    check = -1;
+                                }
+                            }
+                            else
+                            {
+                                check = -1;
+                            }
+                        }
+                        else
+                        {
+                            check = -1;
+                        }
+                    }
+                    else
+                    {
+                        check = -1;
+                    }
+                }
+                else
+                {
+                    check = -1;
+                }
+            }
+
+            while (final_check == -1)
+            {
+                int numChosen;
+                printf("Enter the number of companies to choose:- ");
+                scanf("%d", &numChosen);
+                int chosen[numChosen];
+                if (2 <= numChosen && numChosen < num_of_com)
+                {
+                    ChosenStockID(S, numChosen, chosen);
+                    Question3(S, buy, buy_type, sell, sell_type, numChosen, chosen);
+                    final_check = 0;
+                }
+                else
+                {
+                    printf("!!Invalid Input!! (Enter number of companies in range(2-10)) \nDo you want to continue?(Y/N)");
+                    scanf(" %c", &res);
+                    if (res != 'Y')
+                    {
+                        flag = 0;
+                    }
+                }
+            }
+
+            printf("Next Question?(Y/N):- ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                flag = 0;
+            }
+        }
+        else if (no == 4)
+        {
+            int check = 1, final_check;
+            int buy, sell;
+            char buy_type, sell_type;
+            while (check != -1)
+            {
+                buy = date_Input(S, "buy");
+                if (buy != -1)
+                {
+                    buy_type = checkType_price();
+                    if (buy_type != 'z')
+                    {
+                        sell = date_Input(S, "sell");
+                        if (sell != -1 && buy_type != 'z')
+                        {
+                            int x;
+                            x = checkDay(S, &buy, &sell);
+                            if (x != -1)
+                            {
+                                sell_type = checkType_price();
+                                if (sell_type != 'z')
+                                {
+                                    check = -1;
+                                    final_check = -1;
+                                }
+                                else
+                                {
+                                    check = -1;
+                                }
+                            }
+                            else
+                            {
+                                check = -1;
+                            }
+                        }
+                        else
+                        {
+                            check = -1;
+                        }
+                    }
+                    else
+                    {
+                        check = -1;
+                    }
+                }
+                else
+                {
+                    check = -1;
+                }
+            }
+            if (final_check == -1)
+            {
+                Question4(S, buy, buy_type, sell, sell_type);
+            }
+
+            printf("\nNext Question?(Y/N):- ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                flag = 0;
+            }
+        }
+        else if (no == 5)
+        {
+            int check = 1, final_check;
+            int buy, sell;
+            char buy_type, sell_type;
+            while (check != -1)
+            {
+                buy = date_Input(S, "buy");
+                if (buy != -1)
+                {
+                    buy_type = checkType_price();
+                    if (buy_type != 'z')
+                    {
+                        sell = date_Input(S, "sell");
+                        if (sell != -1 && buy_type != 'z')
+                        {
+                            int x;
+                            x = checkDay(S, &buy, &sell);
+                            if (x != -1)
+                            {
+                                sell_type = checkType_price();
+                                if (sell_type != 'z')
+                                {
+                                    check = -1;
+                                    final_check = -1;
+                                }
+                                else
+                                {
+                                    check = -1;
+                                }
+                            }
+                            else
+                            {
+                                check = -1;
+                            }
+                        }
+                        else
+                        {
+                            check = -1;
+                        }
+                    }
+                    else
+                    {
+                        check = -1;
+                    }
+                }
+                else
+                {
+                    check = -1;
+                }
+            }
+            if (final_check == -1)
+            {
+                Question5(S, buy, buy_type, sell, sell_type);
+            }
+            printf("\nNext Question?(Y/N):- ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                flag = 0;
+                check = 0;
+            }
+        }
+        else if (no == 6)
+        {
+            int buy, sell;
+            int check = 1;
+            char res;
+            while (check != -1)
+            {
+                buy = date_Input(S, "buy");
+                if (buy != -1)
+                {
+                    sell = date_Input(S, "sell");
+                    int x = checkDay(S, &buy, &sell);
+                    if (x != -1)
+                    {
+                        if (sell != -1)
+                        {
+                            Question6(S, buy, sell);
+                            check = -1;
+                        }
+
+                        else
+                        {
+                            printf("!!Invalid Input!!\nDo you want to continue(Y/N) ");
+                            scanf(" %c", &res);
+                            if (res != 'Y')
+                            {
+                                check = -1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        check = -1;
+                    }
+                }
+                else
+                {
+                    printf("!!Invalid Input!!\nDo you want to continue(Y/N) ");
+                    scanf(" %c", &res);
+                    if (res != 'Y')
+                    {
+                        check = -1;
+                    }
+                }
+            }
+            printf("Next Question?(Y/N):- ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                flag = 0;
+                check = 0;
+            }
+        }
+        else if (no == 7)
+        {
+            int buy, sell, now, check = 0;
+            char res;
+            while (check != -1)
+            {
+                now = date_Input(S, "");
+                if (now != -1)
+                {
+                    buy = date_Input(S, "Start");
+                    if (buy != -1)
+                    {
+                        int x;
+                        sell = date_Input(S, "End");
+                        x = checkDay(S, &buy, &sell);
+                        if (x != -1)
+                        {
+                            if (sell != -1)
+                            {
+                                Question7(S, now, buy, sell);
+                                check = -1;
+                            }
+                            else
+                            {
+                                printf("!!Invalid Input!!\nDo you want to continue(Y/N) ");
+                                scanf(" %c", &res);
+                                if (res != 'Y')
+                                {
+                                    check = -1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            check = -1;
+                        }
+                    }
+                    else
+                    {
+                        printf("!!Invalid Input!!\nDo you want to continue(Y/N) ");
+                        scanf(" %c", &res);
+                        if (res != 'Y')
+                        {
+                            check = -1;
+                        }
+                    }
+                }
+                else
+                {
+                    printf("Do you want to continue?(Y/N)");
+                    scanf(" %c", &res);
+                    if (res != 'Y')
+                    {
+                        check = -1;
+                    }
+                }
+            }
+            printf("Next Question?(Y/N):- ");
+            scanf(" %c", &ans);
+            if (ans != 'Y')
+            {
+                check = 0;
+                flag = 0;
+            }
+        }
+        else
+        {
+            int thisv;
+            printf("!!Invalid Input!!\nDo you want to continue?(Y/N):\n");
+            scanf(" %c", &thisv);
+            if (thisv != 'Y')
+            {
+                flag = 0;
+            }
+        }
+    
+    }
+    printf("\t\t\t\t\t\t\t\tHappy Coding");
+}
+
+
 int main()
 {
+    Stock Company[num_of_com];
 
-    Stock Company[num_of_com][num_of_days];
-
-    for (int i = 0; i < num_of_days; i++)
+    // Naming the companies
     {
-        strcpy(Company[0][i].name, "TATASTEEL");
-        strcpy(Company[1][i].name, "COALINDIA");
-        strcpy(Company[2][i].name, "ICICIBANK");
-        strcpy(Company[3][i].name, "ADANIENT ");
-        strcpy(Company[4][i].name, "BAJAJFIN ");
-        strcpy(Company[5][i].name, "ONGC     ");
-        strcpy(Company[6][i].name, "WIPRO    ");
-        strcpy(Company[7][i].name, "RELIANCE ");
-        strcpy(Company[8][i].name, "ITC      ");
-        strcpy(Company[9][i].name, "BPCL     ");
+        strcpy(Company[0].name, "TATASTEEL");
+        strcpy(Company[1].name, "COALINDIA");
+        strcpy(Company[2].name, "ICICIBANK");
+        strcpy(Company[3].name, "ADANIENT ");
+        strcpy(Company[4].name, "BAJAJFIN ");
+        strcpy(Company[5].name, "ONGC     ");
+        strcpy(Company[6].name, "WIPRO    ");
+        strcpy(Company[7].name, "RELIANCE ");
+        strcpy(Company[8].name, "ITC      ");
+        strcpy(Company[9].name, "BPCL     ");
     }
 
-    { // TATASTEEL
-
-        Company[0][6].Open = 127.85;
-        Company[0][5].Open = 127.9;
-        Company[0][4].Open = 125.1;
-        Company[0][3].Open = 125;
-        Company[0][2].Open = 125.35;
-        Company[0][1].Open = 126;
-        Company[0][0].Open = 124.7;
-
-        Company[0][6].High = 128.7;
-        Company[0][5].High = 128.55;
-        Company[0][4].High = 127.25;
-        Company[0][3].High = 125.75;
-        Company[0][2].High = 126.9;
-        Company[0][1].High = 126.3;
-        Company[0][0].High = 125.9;
-
-        Company[0][6].Low = 126.6;
-        Company[0][5].Low = 127;
-        Company[0][4].Low = 124.95;
-        Company[0][3].Low = 124;
-        Company[0][2].Low = 125.1;
-        Company[0][1].Low = 124.7;
-        Company[0][0].Low = 123.75;
-
-        Company[0][6].Close = 127.1;
-        Company[0][5].Close = 127.4;
-        Company[0][4].Close = 127;
-        Company[0][3].Close = 125.05;
-        Company[0][2].Close = 125.9;
-        Company[0][1].Close = 124.95;
-        Company[0][0].Close = 125.3;
-
-        Company[0][6].volume = 20926079;
-        Company[0][5].volume = 24241710;
-        Company[0][4].volume = 23868700;
-        Company[0][3].volume = 26912800;
-        Company[0][2].volume = 19361688;
-        Company[0][1].volume = 24455932;
-        Company[0][0].volume = 28745957;
-
-        // COALINDIA
-
-        Company[1][6].Open = 317.35;
-        Company[1][5].Open = 313;
-        Company[1][4].Open = 307.85;
-        Company[1][3].Open = 305;
-        Company[1][2].Open = 302.55;
-        Company[1][1].Open = 304.55;
-        Company[1][0].Open = 288.25;
-
-        Company[1][6].High = 319.75;
-        Company[1][5].High = 318.35;
-        Company[1][4].High = 313.65;
-        Company[1][3].High = 310.85;
-        Company[1][2].High = 309.1;
-        Company[1][1].High = 305;
-        Company[1][0].High = 303.9;
-
-        Company[1][6].Low = 315.25;
-        Company[1][5].Low = 312.1;
-        Company[1][4].Low = 306.55;
-        Company[1][3].Low = 304.45;
-        Company[1][2].Low = 301.9;
-        Company[1][1].Low = 299.45;
-        Company[1][0].Low = 287.8;
-
-        Company[1][6].Close = 316.95;
-        Company[1][5].Close = 317.4;
-        Company[1][4].Close = 312;
-        Company[1][3].Close = 307.95;
-        Company[1][2].Close = 307.2;
-        Company[1][1].Close = 301.85;
-        Company[1][0].Close = 303.25;
-
-        Company[1][6].volume = 9662837;
-        Company[1][5].volume = 7760527;
-        Company[1][4].volume = 10535107;
-        Company[1][3].volume = 9516879;
-        Company[1][2].volume = 15375295;
-        Company[1][1].volume = 12321154;
-        Company[1][0].volume = 28745957;
-
-        // ICICIBANK
-
-        Company[2][6].Open = 949.2;
-        Company[2][5].Open = 955.4;
-        Company[2][4].Open = 948.5;
-        Company[2][3].Open = 949.95;
-        Company[2][2].Open = 952.85;
-        Company[2][1].Open = 954.9;
-        Company[2][0].Open = 940.4;
-
-        Company[2][6].High = 950.65;
-        Company[2][5].High = 960.95;
-        Company[2][4].High = 954.85;
-        Company[2][3].High = 957.4;
-        Company[2][2].High = 960.1;
-        Company[2][1].High = 962.05;
-        Company[2][0].High = 957.5;
-
-        Company[2][6].Low = 939.1;
-        Company[2][5].Low = 951.5;
-        Company[2][4].Low = 946.15;
-        Company[2][3].Low = 944.55;
-        Company[2][2].Low = 948.4;
-        Company[2][1].Low = 950.75;
-        Company[2][0].Low = 940.35;
-
-        Company[2][6].Close = 943.75;
-        Company[2][5].Close = 953.9;
-        Company[2][4].Close = 951.4;
-        Company[2][3].Close = 951.3;
-        Company[2][2].Close = 954.25;
-        Company[2][1].Close = 953.1;
-        Company[2][0].Close = 951.2;
-
-        Company[2][6].volume = 12000153;
-        Company[2][5].volume = 7747527;
-        Company[2][4].volume = 5763024;
-        Company[2][3].volume = 6650442;
-        Company[2][2].volume = 7836818;
-        Company[2][1].volume = 12321154;
-        Company[2][0].volume = 11452715;
-
-        // ADANIENT
-
-        Company[3][6].Open = 2440;
-        Company[3][5].Open = 2459.95;
-        Company[3][4].Open = 2454.55;
-        Company[3][3].Open = 2488;
-        Company[3][2].Open = 2499;
-        Company[3][1].Open = 2533;
-        Company[3][0].Open = 2443;
-
-        Company[3][6].High = 2441.75;
-        Company[3][5].High = 2462;
-        Company[3][4].High = 2464.70;
-        Company[3][3].High = 2495;
-        Company[3][2].High = 2521.75;
-        Company[3][1].High = 2538;
-        Company[3][0].High = 2515.95;
-
-        Company[3][6].Low = 2401.05;
-        Company[3][5].Low = 2423.50;
-        Company[3][4].Low = 2421.85;
-        Company[3][3].Low = 2422.35;
-        Company[3][2].Low = 2490.65;
-        Company[3][1].Low = 2482.5;
-        Company[3][0].Low = 2443;
-
-        Company[3][6].Close = 2406.35;
-        Company[3][5].Close = 2428.40;
-        Company[3][4].Close = 2429.35;
-        Company[3][3].Close = 2454.55;
-        Company[3][2].Close = 2506.35;
-        Company[3][1].Close = 2488.6;
-        Company[3][0].Close = 2498.3;
-
-        Company[3][6].volume = 776977;
-        Company[3][5].volume = 707543;
-        Company[3][4].volume = 803856;
-        Company[3][3].volume = 2278682;
-        Company[3][2].volume = 1804818;
-        Company[3][1].volume = 1627836;
-        Company[3][0].volume = 1771910;
-
-        // BAJAJFINANCE
-
-        Company[4][6].Open = 8050;
-        Company[4][5].Open = 8080;
-        Company[4][4].Open = 8044.30;
-        Company[4][3].Open = 7999.55;
-        Company[4][2].Open = 8125;
-        Company[4][1].Open = 8139.80;
-        Company[4][0].Open = 8055;
-
-        Company[4][6].High = 8084.60;
-        Company[4][5].High = 8159;
-        Company[4][4].High = 8069;
-        Company[4][3].High = 8082.90;
-        Company[4][2].High = 8127;
-        Company[4][1].High = 8173;
-        Company[4][0].High = 8135;
-
-        Company[4][6].Low = 7850;
-        Company[4][5].Low = 8057.55;
-        Company[4][4].Low = 7982.65;
-        Company[4][3].Low = 7956.05;
-        Company[4][2].Low = 8003;
-        Company[4][1].Low = 8095.45;
-        Company[4][0].Low = 8021;
-
-        Company[4][6].Close = 7866.55;
-        Company[4][5].Close = 8093;
-        Company[4][4].Close = 8036;
-        Company[4][3].Close = 8051.65;
-        Company[4][2].Close = 8014.30;
-        Company[4][1].Close = 8101.95;
-        Company[4][0].Close = 8083.60;
-
-        Company[4][6].volume = 12000153;
-        Company[4][5].volume = 838283;
-        Company[4][4].volume = 438246;
-        Company[4][3].volume = 662282;
-        Company[4][2].volume = 764092;
-        Company[4][1].volume = 712372;
-        Company[4][0].volume = 965024;
-
-        // ONGC
-
-        Company[5][6].Open = 188;
-        Company[5][5].Open = 187;
-        Company[5][4].Open = 187.95;
-        Company[5][3].Open = 184.5;
-        Company[5][2].Open = 183.2;
-        Company[5][1].Open = 184.4;
-        Company[5][0].Open = 182.3;
-
-        Company[5][6].High = 188.05;
-        Company[5][5].High = 187.05;
-        Company[5][4].High = 188.2;
-        Company[5][3].High = 186.25;
-        Company[5][2].High = 184.85;
-        Company[5][1].High = 184.7;
-        Company[5][0].High = 184.5;
-
-        Company[5][6].Low = 186.05;
-        Company[5][5].Low = 185.55;
-        Company[5][4].Low = 186.25;
-        Company[5][3].Low = 184.05;
-        Company[5][2].Low = 183;
-        Company[5][1].Low = 182.75;
-        Company[5][0].Low = 182.05;
-
-        Company[5][6].Close = 186.95;
-        Company[5][5].Close = 186.25;
-        Company[5][4].Close = 186.55;
-        Company[5][3].Close = 184.9;
-        Company[5][2].Close = 184.45;
-        Company[5][1].Close = 183.25;
-        Company[5][0].Close = 183.5;
-
-        Company[5][6].volume = 10181113;
-        Company[5][5].volume = 4381065;
-        Company[5][4].volume = 12376549;
-        Company[5][3].volume = 7435899;
-        Company[5][2].volume = 8677885;
-        Company[5][1].volume = 8499601;
-        Company[5][0].volume = 11819690;
-
-        // WIPRO
-
-        Company[6][6].Open = 409;
-        Company[6][5].Open = 411.7;
-        Company[6][4].Open = 411;
-        Company[6][3].Open = 411.9;
-        Company[6][2].Open = 421.75;
-        Company[6][1].Open = 409;
-        Company[6][0].Open = 406.4;
-
-        Company[6][6].High = 413.65;
-        Company[6][5].High = 413.85;
-        Company[6][4].High = 411.9;
-        Company[6][3].High = 414.4;
-        Company[6][2].High = 421.9;
-        Company[6][1].High = 423.95;
-        Company[6][0].High = 408.75;
-
-        Company[6][6].Low = 407;
-        Company[6][5].Low = 411.05;
-        Company[6][4].Low = 408.15;
-        Company[6][3].Low = 409.05;
-        Company[6][2].Low = 414.7;
-        Company[6][1].Low = 409;
-        Company[6][0].Low = 406.2;
-
-        Company[6][6].Close = 407.45;
-        Company[6][5].Close = 411.4;
-        Company[6][4].Close = 410.2;
-        Company[6][3].Close = 411.05;
-        Company[6][2].Close = 417.1;
-        Company[6][1].Close = 421.15;
-        Company[6][0].Close = 407.75;
-
-        Company[6][6].volume = 2440533;
-        Company[6][5].volume = 2989694;
-        Company[6][4].volume = 2638826;
-        Company[6][3].volume = 5457027;
-        Company[6][2].volume = 1804818;
-        Company[6][1].volume = 9546114;
-        Company[6][0].volume = 2564007;
-
-        // 8. RELIANCE
-
-        Company[7][6].Open = 2355.25;
-        Company[7][5].Open = 2356;
-        Company[7][4].Open = 2340;
-        Company[7][3].Open = 2340;
-        Company[7][2].Open = 2343.85;
-        Company[7][1].Open = 2314.45;
-        Company[7][0].Open = 2306.55;
-
-        Company[7][6].High = 2367;
-        Company[7][5].High = 2359.70;
-        Company[7][4].High = 2354.55;
-        Company[7][3].High = 2357.50;
-        Company[7][2].High = 2359.35;
-        Company[7][1].High = 2349.70;
-        Company[7][0].High = 2317.90;
-
-        Company[7][6].Low = 2321;
-        Company[7][5].Low = 2341.30;
-        Company[7][4].Low = 2336;
-        Company[7][3].Low = 2329.15;
-        Company[7][2].Low = 2338.15;
-        Company[7][1].Low = 2313;
-        Company[7][0].Low = 2303.75;
-
-        Company[7][6].Close = 2324;
-        Company[7][5].Close = 2355.25;
-        Company[7][4].Close = 2344.05;
-        Company[7][3].Close = 2349.30;
-        Company[7][2].Close = 2349.40;
-        Company[7][1].Close = 2345.05;
-        Company[7][0].Close = 2308.40;
-
-        Company[7][6].volume = 4459160;
-        Company[7][5].volume = 3964090;
-        Company[7][4].volume = 12376549;
-        Company[7][3].volume = 5075158;
-        Company[7][2].volume = 1804818;
-        Company[7][1].volume = 4907059;
-        Company[7][0].volume = 5118016;
-
-        // 9. ITC
-
-        Company[8][6].Open = 454.25;
-        Company[8][5].Open = 449.8;
-        Company[8][4].Open = 448;
-        Company[8][3].Open = 449.85;
-        Company[8][2].Open = 449.65;
-        Company[8][1].Open = 447.2;
-        Company[8][0].Open = 440.45;
-
-        Company[8][6].High = 458.2;
-        Company[8][5].High = 454.5;
-        Company[8][4].High = 451;
-        Company[8][3].High = 451.8;
-        Company[8][2].High = 452.5;
-        Company[8][1].High = 449.45;
-        Company[8][0].High = 444.85;
-
-        Company[8][6].Low = 451;
-        Company[8][5].Low = 449;
-        Company[8][4].Low = 446.2;
-        Company[8][3].Low = 447;
-        Company[8][2].Low = 446.15;
-        Company[8][1].Low = 444.8;
-        Company[8][0].Low = 440.45;
-
-        Company[8][6].Close = 451.65;
-        Company[8][5].Close = 453.45;
-        Company[8][4].Close = 448.95;
-        Company[8][3].Close = 448.35;
-        Company[8][2].Close = 450.7;
-        Company[8][1].Close = 448.25;
-        Company[8][0].Close = 444.4;
-
-        Company[8][6].volume = 6894947;
-        Company[8][5].volume = 6936218;
-        Company[8][4].volume = 4214958;
-        Company[8][3].volume = 7632483;
-        Company[8][2].volume = 11774487;
-        Company[8][1].volume = 7651513;
-        Company[8][0].volume = 5014758;
-
-        // BPCL
-
-        Company[9][6].Open = 355;
-        Company[9][5].Open = 348.90;
-        Company[9][4].Open = 345;
-        Company[9][3].Open = 347.10;
-        Company[9][2].Open = 344.90;
-        Company[9][1].Open = 342.20;
-        Company[9][0].Open = 340.05;
-
-        Company[9][6].High = 356.50;
-        Company[9][5].High = 357.70;
-        Company[9][4].High = 348.45;
-        Company[9][3].High = 350.60;
-        Company[9][2].High = 350.35;
-        Company[9][1].High = 345.30;
-        Company[9][0].High = 342.60;
-
-        Company[9][6].Low = 348.85;
-        Company[9][5].Low = 346.70;
-        Company[9][4].Low = 342;
-        Company[9][3].Low = 347.05;
-        Company[9][2].Low = 344.05;
-        Company[9][1].Low = 341.50;
-        Company[9][0].Low = 339.20;
-
-        Company[9][6].Close = 350.20;
-        Company[9][5].Close = 354.70;
-        Company[9][4].Close = 347.25;
-        Company[9][3].Close = 347.70;
-        Company[9][2].Close = 348.70;
-        Company[9][1].Close = 342.55;
-        Company[9][0].Close = 340.40;
-
-        Company[9][6].volume = 4581114;
-        Company[9][5].volume = 6936218;
-        Company[9][4].volume = 1631235;
-        Company[9][3].volume = 1990902;
-        Company[9][2].volume = 3851901;
-        Company[9][1].volume = 2399756;
-        Company[9][0].volume = 1786489;
+    // Assigning StockID to companies
+    for (int i = 0; i < num_of_com; i++)
+    {
+        Company[i].stockID = id + i;
     }
+
+    // Adding Date to 'Day' structure
+    for (int i = 0; i < num_of_com; i++)
+    {
+        for (int j = 0; j < num_of_days; j++)
+        {
+            Company[i].DMY[j].date = dayStart + j;
+            Company[i].DMY[j].month = 3;
+            Company[i].DMY[j].year = 2023;
+        }
+    }
+
+    // File Handling 
+
+    FILE *file[num_of_com];
+
+    {   file[0] = fopen("TataSteel.txt", "r");
+        file[1] = fopen("CoalIndia.txt", "r");
+        file[2] = fopen("ICICI.txt", "r");
+        file[3] = fopen("Adanient.txt", "r");
+        file[4] = fopen("BajajFin.txt", "r");
+        file[5] = fopen("ONGC.txt", "r");
+        file[6] = fopen("Wipro.txt", "r");
+        file[7] = fopen("Reliance.txt", "r");
+        file[8] = fopen("ITC.txt", "r");
+        file[9] = fopen("BPCL.txt", "r");}
+    
+    if (file == NULL)
+    {
+        printf("Error.\n");
+        return 1;
+    }
+
+    for (int j = 0; j < num_of_com; j++)
+    {
+        if (ferror(file[j]))
+        {
+            printf("Error in reading file");
+            return 1;
+        }
+
+        for (int i = 0; i < num_of_days; i++)
+        {
+            if (fscanf(file[j], "%f", &Company[j].Open[i]) == EOF)
+                break;
+            if (fscanf(file[j], "%f", &Company[j].High[i]) == EOF)
+                break;
+            if (fscanf(file[j], "%f", &Company[j].Low[i]) == EOF)
+                break;
+            if (fscanf(file[j], "%f", &Company[j].Close[i]) == EOF)
+                break;
+            if (fscanf(file[j], "%d", &Company[j].volume[i]) == EOF)
+                break;
+        }
+        fclose(file[j]);
+    }
+
+    for (int i = 0; i < num_of_com; i++)
+    {
+        printf("Company name:- %s\n", Company[i].name);
+        printf("Stock ID: %d\n", Company[i].stockID);
+        printf("Price Types:");
+        printf(" \t  Open   High   Low    Close   Volume\n");
+        printf(" Date  \t \t   |      |      |       |       |    \n");
+        for (int j = 0; j < num_of_days; j++)
+        {
+            printf("%d-0%d-%d \t  %0.2f %0.2f %0.2f %0.2f %d \n", Company[i].DMY[j].date, Company[i].DMY[j].month, Company[i].DMY[j].year, Company[i].Open[j], Company[i].High[j], Company[i].Low[j], Company[i].Close[j], Company[i].volume[j]);
+        }
+        printf("\n\n");
+    }
+
+    //
 
     input(Company);
 
